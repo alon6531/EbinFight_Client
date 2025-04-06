@@ -16,14 +16,17 @@
     <Filter Include="States">
       <UniqueIdentifier>{92bd7a8d-737a-40a0-99af-bafd0edf5a41}</UniqueIdentifier>
     </Filter>
-    <Filter Include="States\Game">
-      <UniqueIdentifier>{7bbe9660-1668-4a61-99e9-ba80c91bc5e3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Client">
       <UniqueIdentifier>{577b2e88-6b16-4a06-ba3f-ec2199c6e12e}</UniqueIdentifier>
     </Filter>
     <Filter Include="General">
       <UniqueIdentifier>{cb665ba1-6d9d-4508-983e-443072063cd3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{f29bb8bf-66ce-43e5-82dd-75c8ac32c79b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{7bbe9660-1668-4a61-99e9-ba80c91bc5e3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -31,12 +34,9 @@
       <Filter>States</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">
-      <Filter>States\Game</Filter>
+      <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="Client.cpp">
-      <Filter>Client</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine.cpp">
       <Filter>Client</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
@@ -45,22 +45,43 @@
     <ClCompile Include="Globals.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="Handle_Controls.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Object_Manager.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="State.h">
       <Filter>States</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
-      <Filter>States\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine.h">
-      <Filter>Client</Filter>
+      <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="Client.h">
       <Filter>Client</Filter>
     </ClInclude>
     <ClInclude Include="Globals.h">
       <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Handle_Controls.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Object_Manager.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

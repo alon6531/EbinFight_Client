@@ -10,7 +10,15 @@
 #include <fstream>
 #include <map>
 #include <stack>
+#include <unordered_map>
+#include "Handle_Controls.h"
 
+class Global
+{
+public:
+	static unsigned int win_width;
+	static unsigned int win_height;
+};
 
 std::uint32_t IpToUint32_t(const std::string& ip);
 bool OpenFile(std::vector<std::string>& lines, const std::string& file_name);

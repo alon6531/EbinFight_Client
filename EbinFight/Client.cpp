@@ -10,7 +10,7 @@ Client::Client()
 void Client::Init()
 {
     std::vector<std::string> lines;
-    if (OpenFile(lines, "E:\\EbinFight\\Configs\\Client.txt"))
+    if (OpenFile(lines, "..\\Configs\\Client.txt"))
     {
 
         try {

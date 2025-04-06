@@ -1,0 +1,5 @@
+Close window=Escape
+Move Up=W
+Move Down=S
+Move Left=A
+Move Right=D

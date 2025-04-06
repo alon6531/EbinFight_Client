@@ -1,4 +1,6 @@
 window name=EbinFight
 window width=1920
 window heigth=1080
-window style=Titlebar
+window style=Close
+
+handle controls file path=..\\Configs\\Controls.txt

@@ -29,6 +29,8 @@ private:
 	sf::Clock m_clock;
 	float m_dt;// delta time
 
+	Handle_Controls* m_handle_controls;
+
 	std::stack<State*> m_state;
 };
 

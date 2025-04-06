@@ -146,15 +146,21 @@
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Globals.cpp" />
+    <ClCompile Include="Handle_Controls.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Object_Manager.cpp" />
     <ClCompile Include="State.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="Globals.h" />
+    <ClInclude Include="Handle_Controls.h" />
+    <ClInclude Include="Object_Manager.h" />
     <ClInclude Include="State.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

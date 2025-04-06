@@ -16,7 +16,7 @@ void Engine::Run()
     {
         while (m_window->isOpen())
         {
-            m_dt = m_clock.restart().asSeconds();
+            m_dt = m_clock.restart().asSeconds() * 100;
 
             this->Handle_Events();
 
@@ -34,8 +34,9 @@ void Engine::Init()
 {
     std::string winName;
     std::string winStyle;
+    std::string handleControlsFilePath;
     std::vector<std::string> lines;
-    if (OpenFile(lines, "E:\\EbinFight\\Configs\\Window.txt"))
+    if (OpenFile(lines, "..\\Configs\\Window.txt"))
     {
 
         try {
@@ -43,6 +44,7 @@ void Engine::Init()
             m_winWidth = static_cast<unsigned int>(std::stoi(lines[1]));
             m_winHeight = static_cast<unsigned int>(std::stoi(lines[2]));
             winStyle = lines[3];
+            handleControlsFilePath = lines[4];
         }
         catch (const std::exception& e) {
             std::cerr << "Engine:Error parsing configuration: " << e.what() << std::endl;
@@ -50,7 +52,11 @@ void Engine::Init()
         }
         std::cout << "Engine:winWidth: " << m_winWidth << "\n";
         std::cout << "Engine:winHeight: " << m_winHeight << "\n";
+        Global::win_width = m_winWidth;
+        Global::win_height = m_winHeight;
     }
+    else
+        return;
     if(winStyle == "Titlebar")
         m_window = new sf::RenderWindow(
             sf::VideoMode({ m_winWidth , m_winHeight }),
@@ -66,10 +72,17 @@ void Engine::Init()
             sf::VideoMode({ m_winWidth , m_winHeight }),
             winName,
             sf::Style::Default);
+    else if (winStyle == "Close")
+        m_window = new sf::RenderWindow(
+            sf::VideoMode({ m_winWidth , m_winHeight }),
+            winName,
+            sf::Style::Close);
     else
         std::cerr << "Engine:Error createing window: " << std::endl;
 
     m_dt = 0;
+
+    m_handle_controls = new Handle_Controls(handleControlsFilePath);
 
     m_state.push(new Game(m_state));
 }
@@ -77,14 +90,33 @@ void Engine::Init()
 
 void Engine::Handle_Events()
 {
-    if (m_state.top())
+
+    while (const std::optional event = m_window->pollEvent())
     {
-        m_state.top()->Handle_Events();
+      
+        if (event->is<sf::Event::Closed>())
+            this->CloseWindow();
+
+        auto keyEvent = event->getIf<sf::Event::KeyPressed>();
+        if(keyEvent)
+        { 
+            if (keyEvent->code == m_handle_controls->GetControls("CloseWindow"))
+                this->CloseWindow();
+
+
+        }
+       
+
+        if (m_state.top())
+        {
+            m_state.top()->Handle_Events(*event, *m_handle_controls, m_dt);
+        }
     }
 }
 
 void Engine::Update()
 {
+
     if (m_state.top())
     {
         m_state.top()->Update(m_dt);

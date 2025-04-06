@@ -84,7 +84,7 @@ void Engine::Init()
 
     m_handle_controls = new Handle_Controls(handleControlsFilePath);
 
-    m_state.push(new Game(m_state));
+    m_state.push(new Game(m_client, m_state));
 }
 
 
@@ -125,7 +125,7 @@ void Engine::Update()
 
 void Engine::Render()
 {
-    m_window->clear(sf::Color::Green);
+    m_window->clear(sf::Color::Red);
 
     if (m_state.top())
     {

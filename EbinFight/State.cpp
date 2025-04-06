@@ -1,5 +1,5 @@
 #include "State.h"
 
-State::State(std::stack<State*>& currentState) : m_currentState(currentState)
+State::State(Client& client, std::stack<State*>& currentState) : p_client(client), p_currentState(currentState)
 {
 }

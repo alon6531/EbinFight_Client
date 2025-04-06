@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Globals.h"
+#include "HitBoxComponent.h"
 
 class GameObject
 {
@@ -11,6 +12,17 @@ public:
 
 	virtual void Render(sf::RenderWindow& window, const sf::Vector2f& camera);
 
+
+	void AddHitBoxComponent(const sf::Vector2f& offset, const sf::Vector2f& size);
+
+
+
+
+
+
+
+
+
 	 sf::Sprite* GetSprite();
 
 private:
@@ -18,7 +30,8 @@ private:
 	void Init(const sf::Vector2f& pos, const sf::Vector2f& scale);
 
 protected:
-	sf::Sprite* m_sprite;
+	sf::Sprite* p_sprite;
+	HitBoxComponent* p_hitBoxComponent;
 
 private:
 	sf::Texture* m_spriteTexure;

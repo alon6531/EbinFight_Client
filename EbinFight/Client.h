@@ -11,8 +11,10 @@ public:
     bool connect();
     void reconnect();
     void sendMessage(const std::string& message);
-    void receiveMessages();
+    const std::string& receiveMessages();
     void Disconnect();
+
+    const std::string& ReciveAllObjects();
 
 private:
     sf::TcpSocket m_socket;

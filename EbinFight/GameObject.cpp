@@ -22,42 +22,53 @@ void GameObject::InitTexture(const std::string& texture_filePath)
 void GameObject::Init(const sf::Vector2f& pos, const sf::Vector2f& scale)
 {
 	if (m_spriteTexure)
-		m_sprite = new sf::Sprite(*m_spriteTexure);
+		p_sprite = new sf::Sprite(*m_spriteTexure);
 	else
 		return;
 
-	m_sprite->setPosition(pos);
-	m_sprite->setScale(scale);
+	p_sprite->setPosition(pos);
+	p_sprite->setScale(scale);
 
 }
 
 void GameObject::Update(float dt)
 {
-	if (m_sprite)
-	{
-	}
+	if (p_hitBoxComponent)
+		p_hitBoxComponent->Update(dt);
 }
 
 void GameObject::Render(sf::RenderWindow& window, const sf::Vector2f& camera)
 {
-	if (m_sprite)
+	if (p_sprite)
 	{
 		// Save original position
-		sf::Vector2f originalPos = m_sprite->getPosition();
+		sf::Vector2f originalPos = p_sprite->getPosition();
+
+		if (p_hitBoxComponent)
+			p_hitBoxComponent->Render(window);
 
 		// Apply camera offset
-		m_sprite->setPosition(originalPos - camera);
-		std::cout << camera.x << "\n";
+		//m_sprite->setPosition(originalPos - camera);
+		//std::cout << camera.x << "\n";
 		// Draw sprite
-		window.draw(*m_sprite);
+		window.draw(*p_sprite);
 
 		// Restore original position
-		m_sprite->setPosition(originalPos);
+		p_sprite->setPosition(originalPos);
 	}
+
+	
+
+}
+
+void GameObject::AddHitBoxComponent(const sf::Vector2f& offset, const sf::Vector2f& size)
+{
+	if (p_sprite)
+		p_hitBoxComponent = new HitBoxComponent(*p_sprite, offset, size);
 }
 
 sf::Sprite* GameObject::GetSprite()
 {
-	if(m_sprite)
-		return m_sprite;
+	if(p_sprite)
+		return p_sprite;
 }

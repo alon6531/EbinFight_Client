@@ -1,10 +1,11 @@
 #pragma once
 #include "Globals.h"
+#include "Client.h"
 
 class State
 {
 public:
-	State(std::stack<State*>& currentState);
+	State(Client& client, std::stack<State*>& currentState);
 
 	virtual void Handle_Events(const sf::Event& event, Handle_Controls& m_handle_controls, float dt) = 0;
 	virtual void Update(float dt) = 0;
@@ -12,7 +13,8 @@ public:
 
 	virtual void OnExitState() = 0;
 protected:
-	std::stack<State*>& m_currentState;
+	std::stack<State*>& p_currentState;
+	Client& p_client;
 	bool isExitState;
 	
 };

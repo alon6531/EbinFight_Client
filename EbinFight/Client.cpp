@@ -79,7 +79,7 @@ void Client::sendMessage(const std::string& message)
     }
 }
 
-void Client::receiveMessages()
+const std::string& Client::receiveMessages()
 {
     try {
         char buffer[1024];
@@ -90,6 +90,9 @@ void Client::receiveMessages()
         {
             std::string message(buffer, received);
             std::cout << "Client:Server: " << message << "\n";
+
+            
+            return *new std::string(message);
         }
         else if (status == sf::Socket::Status::Disconnected)
         {
@@ -108,4 +111,12 @@ void Client::Disconnect()
 {
     std::cout << "Client:client disconnecting..." << "\n";
     m_socket.disconnect();
+}
+
+const std::string& Client::ReciveAllObjects()
+{
+    this->sendMessage("SendAllObjects|null");
+
+
+    return this->receiveMessages();
 }

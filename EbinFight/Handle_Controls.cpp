@@ -19,10 +19,10 @@ void Handle_Controls::Init(const std::string& file_path)
 
         try {
             m_controls["CloseWindow"] = this->StringToKey(lines[0]);
-            m_controls["MoveUp"] = this->StringToKey(lines[1]);
-            m_controls["MoveDown"] = this->StringToKey(lines[2]);
-            m_controls["MoveLeft"] = this->StringToKey(lines[3]);
-            m_controls["MoveRight"] = this->StringToKey(lines[4]);
+            m_controls["Up"] = this->StringToKey(lines[1]);
+            m_controls["Down"] = this->StringToKey(lines[2]);
+            m_controls["Left"] = this->StringToKey(lines[3]);
+            m_controls["Right"] = this->StringToKey(lines[4]);
         }
         catch (const std::exception& e) {
             std::cerr << "Engine:Error parsing configuration: " << e.what() << std::endl;

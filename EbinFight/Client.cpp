@@ -107,16 +107,56 @@ const std::string& Client::receiveMessages()
     }
 }
 
+const std::string& Client::receiveLargeMessages()
+{
+    try {
+        char buffer[65536];
+        std::size_t received;
+        sf::Socket::Status status = m_socket.receive(buffer, sizeof(buffer), received);
+
+        if (status == sf::Socket::Status::Done)
+        {
+            std::string message(buffer, received);
+            std::cout << "Client:Server: " << message << "\n";
+
+
+            return *new std::string(message);
+        }
+        else if (status == sf::Socket::Status::Disconnected)
+        {
+            throw std::runtime_error("Client:Disconnected from server");
+        }
+    }
+    catch (const std::exception& e) {
+        std::cerr << e.what() << "\n";
+        if (e.what() == std::string("Client:Disconnected from server")) {
+            this->reconnect(); // Attempt to reconnect on disconnect
+        }
+    }
+}
+
 void Client::Disconnect()
 {
     std::cout << "Client:client disconnecting..." << "\n";
     m_socket.disconnect();
 }
 
-const std::string& Client::ReciveAllObjects()
+json Client::ReciveMapData()
 {
-    this->sendMessage("SendAllObjects|null");
-
-
-    return this->receiveMessages();
+    json send = {
+		{"action", "SendMapData"}
+	};
+	this->sendMessage(send.dump());
+	std::string message = this->receiveLargeMessages();
+	json mapData;
+	try {
+		mapData = json::parse(message);
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Client:ReciveMapData:Error parsing JSON: " << e.what() << "\n";
+		return nullptr;
+	}
+	return mapData;
 }
+
+

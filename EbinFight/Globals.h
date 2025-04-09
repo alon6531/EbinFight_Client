@@ -9,10 +9,12 @@
 #include <vector>
 #include <fstream>
 #include <queue>
+#include "json.hpp"
 #include <map>
 #include <stack>
 #include <unordered_map>
-#include "Handle_Controls.h"
+
+using json = nlohmann::json;
 
 class Global
 {

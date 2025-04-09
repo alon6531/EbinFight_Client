@@ -16,7 +16,7 @@ void Engine::Run()
     {
         while (m_window->isOpen())
         {
-            m_dt = m_clock.restart().asSeconds() * 100;
+            m_dt = m_clock.restart().asMicroseconds();
 
             this->Handle_Events();
 

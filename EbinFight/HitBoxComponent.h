@@ -13,6 +13,9 @@ public:
     void setPosition(const sf::Vector2f& pos);
     void setOffset(const sf::Vector2f& newOffset);
 
+    bool IsCollide(const sf::FloatRect& rect);
+
+	sf::RectangleShape& GetHitBox() { return m_hitbox; }
 private:
     sf::RectangleShape m_hitbox;
     sf::Vector2f m_offset;

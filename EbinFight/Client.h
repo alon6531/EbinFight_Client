@@ -2,7 +2,6 @@
 
 #include "Globals.h"
 
-
 class Client
 {
 public:
@@ -12,9 +11,10 @@ public:
     void reconnect();
     void sendMessage(const std::string& message);
     const std::string& receiveMessages();
+    const std::string& receiveLargeMessages();
     void Disconnect();
 
-    const std::string& ReciveAllObjects();
+    json ReciveMapData();
 
 private:
     sf::TcpSocket m_socket;

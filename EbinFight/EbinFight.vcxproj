@@ -153,6 +153,8 @@
     <ClCompile Include="HitBoxComponent.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Handle_Object.cpp" />
+    <ClCompile Include="Map.cpp" />
+    <ClCompile Include="MovementComponent.cpp" />
     <ClCompile Include="State.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +167,9 @@
     <ClInclude Include="Handle_Controls.h" />
     <ClInclude Include="Handle_Object.h" />
     <ClInclude Include="HitBoxComponent.h" />
+    <ClInclude Include="json.hpp" />
+    <ClInclude Include="Map.h" />
+    <ClInclude Include="MovementComponent.h" />
     <ClInclude Include="State.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

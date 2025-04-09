@@ -4,8 +4,12 @@ GameObject::GameObject(const std::string& texture_filePath, const sf::Vector2f& 
 {
 	this->InitTexture(texture_filePath);
 
-	sf::Vector2f newScale = sf::Vector2f(scale.x / 100, scale.y / 100);
-	this->Init(pos, newScale);
+	this->Init(pos, scale);
+}
+
+GameObject::GameObject(const sf::Sprite& sprite) : p_sprite(new sf::Sprite(sprite))
+{
+	m_spriteTexure = new sf::Texture(sprite.getTexture());
 }
 
 void GameObject::InitTexture(const std::string& texture_filePath)
@@ -35,6 +39,11 @@ void GameObject::Update(float dt)
 {
 	if (p_hitBoxComponent)
 		p_hitBoxComponent->Update(dt);
+
+	if (m_movementComponent)
+	{
+		m_movementComponent->Update(dt);
+	}
 }
 
 void GameObject::Render(sf::RenderWindow& window, const sf::Vector2f& camera)
@@ -67,8 +76,9 @@ void GameObject::AddHitBoxComponent(const sf::Vector2f& offset, const sf::Vector
 		p_hitBoxComponent = new HitBoxComponent(*p_sprite, offset, size);
 }
 
-sf::Sprite* GameObject::GetSprite()
+void GameObject::AddMovementComponent(float speed)
 {
-	if(p_sprite)
-		return p_sprite;
+	if (p_sprite)
+		m_movementComponent = new MovementComponent(*p_sprite, speed);
 }
+

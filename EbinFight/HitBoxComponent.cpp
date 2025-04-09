@@ -6,6 +6,7 @@ HitBoxComponent::HitBoxComponent(sf::Sprite& sprite, const sf::Vector2f& offset,
  
     m_hitbox.setPosition(sprite.getPosition() + m_offset);
     m_hitbox.setSize(size == sf::Vector2f(0.f, 0.f) ? sprite.getGlobalBounds().size : size);
+    m_hitbox.setOrigin(m_hitbox.getLocalBounds().getCenter());
     m_hitbox.setFillColor(sf::Color(0, 0, 0, 0));  // Transparent fill
     m_hitbox.setOutlineThickness(1.f);
     m_hitbox.setOutlineColor(sf::Color::Green);
@@ -34,4 +35,12 @@ void HitBoxComponent::setPosition(const sf::Vector2f& pos)
 void HitBoxComponent::setOffset(const sf::Vector2f& newOffset)
 {
     m_offset = newOffset;
+}
+
+bool HitBoxComponent::IsCollide(const sf::FloatRect& rect)
+{
+    auto intersection = m_hitbox.getGlobalBounds().findIntersection(rect);
+
+    // If the intersection has a non-zero width and height, there is a collision
+    return intersection.has_value();
 }

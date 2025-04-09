@@ -1,6 +1,7 @@
 #pragma once
 #include "State.h"
 #include "Handle_Object.h"
+#include "Map.h"
 
 
 class Game :
@@ -8,6 +9,7 @@ class Game :
 {
 public:
 	Game(Client& client, std::stack<State*>& currentState);
+
 
 	void Handle_Events(const sf::Event& event, Handle_Controls& m_handle_controls, float dt) override;
 	void Update(float dt) override;
@@ -19,7 +21,8 @@ private:
 	void Init();
 
 private:
-	Object_Manager handleObjects;
+	Map* map;
+	Handle_Object handleObjects;
 	
 };
 

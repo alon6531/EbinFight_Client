@@ -148,9 +148,6 @@ std::string Client::receiveMessageUDP()
         std::optional<sf::IpAddress> sender;
         unsigned short senderPort;
 
-        m_udpSocket.bind(m_serverPort);  // קבע את הפורט של ה-UDP
-        m_udpSocket.setBlocking(false);  // שמור על חיבור לא חסום
-       
         // קבלה של הודעה ב-UDP
         sf::Socket::Status status = m_udpSocket.receive(buffer, sizeof(buffer), received, sender, senderPort);
         if (status == sf::Socket::Status::Done) {
@@ -253,10 +250,41 @@ void Client::UpdatePlayer(json player_data)
 	this->sendMessageUDP(send.dump());
 }
 
+json Client::ReceiveAllPlayers()
+{
+    json send = {
+        {"action", "SendAllPlayers"}
+    };
+
+    // Send the request to the server via UDP
+    this->sendMessageUDP(send.dump());
+
+    // Receive the response from the server
+    std::string message = this->receiveMessageUDP();
+	if (message.empty()) {
+		std::cerr << "Client:ReceiveAllPlayers: No Players Found\n";
+		return json::object();
+	}
+    std::cout << "Client: ReceiveAllPlayers: " << message << "\n";
+
+    // Parse and handle the response (optional - you can improve this depending on the server's response)
+    try {
+        json response = json::parse(message);
+        
+        return response;
+       
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error parsing response: " << e.what() << "\n";
+        return json::object();
+    }
+}
+
 json Client::ReceivePlayer()
 {
     json send = {
-        {"action", "SendPlayer"}
+        {"action", "SendPlayer"},
+	  
     };
     this->sendMessage(send.dump());
     std::string message = this->receiveMessages();

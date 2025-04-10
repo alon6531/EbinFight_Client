@@ -19,6 +19,7 @@ public:
     void InitUser();
     void InitPlayer(json player_data);
 	void UpdatePlayer(json player_data);
+	json ReceiveAllPlayers();
     json ReceivePlayer();
     json ReciveMapData();
 

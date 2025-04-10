@@ -14,12 +14,30 @@ void Game::Init()
 	json map_data = p_client.ReciveMapData();
 	map = new Map(map_data, handleObjects);
 
-	GameObject* player = new GameObject("..\\Assets\\a.png", sf::Vector2f(600.f, 400.f), 
-		sf::Vector2f(0.3f, 0.3f));
-	player->AddHitBoxComponent(sf::Vector2f(0.f, 0.f), sf::Vector2f(0, 0));
-	player->AddMovementComponent(20);
-	player->GetSprite()->setOrigin(player->GetSprite()->getLocalBounds().getCenter());
-	handleObjects.AddObject("player", *player);
+	
+	// this->InitPlayer();
+	json player_data = p_client.ReceivePlayer();
+
+	std::string player_name = player_data.begin().key();               // "alon"
+	json player_info = player_data[player_name]["data"];              // { pos, speed, ... }
+
+	GameObject player = *GameObject::CreateObject(player_info);
+
+
+	handleObjects.AddPlayer(player_name, player);
+}
+
+void Game::InitPlayer()
+{
+	json player_data = {
+		{"texture", "a.png"},
+		{"pos", {600.f, 400.f}},
+		{"scale", {0.3f, 0.3f}},
+		{"origin", "center"},
+		{"hitboxComponent", {true, {0.f, 0.f}, {0, 0}}},
+		{"movement_speedComponent", {true, 20}}
+	};
+	p_client.InitPlayer(player_data);
 }
 
 

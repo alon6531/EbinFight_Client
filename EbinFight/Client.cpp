@@ -2,13 +2,16 @@
 #include <iostream>
 
 
-Client::Client() 
+Client::Client(const std::string& username)
 {
+	m_username = username;
+    m_udpSocket.setBlocking(false);
     m_reconnCounter = 5;
 }
 
 void Client::Init()
 {
+  
     std::vector<std::string> lines;
     if (OpenFile(lines, "..\\Configs\\Client.txt"))
     {
@@ -41,8 +44,18 @@ bool Client::connect()
         std::cerr << "Client:Failed to connect to server.\n";
         return false;
     }
-    std::cout << "Client:Connected to server at " << m_serverIp << ":" << m_serverPort << "\n";
+    this->InitUser();
+    std::cout << "Client: " << m_username <<"Connected to server at " << m_serverIp << ":" << m_serverPort << "\n";
     return true;
+}
+
+void Client::InitUser()
+{
+	json send = {
+		   {"action", "InitUser"},
+		   {"data", m_username}
+	};
+	this->sendMessage(send.dump());
 }
 
 void Client::reconnect()
@@ -74,7 +87,7 @@ void Client::sendMessage(const std::string& message)
         std::cerr << e.what() << "\n";
         if (e.what() == std::string("Client:Failed to send message")) {
             // Try to reconnect if sending fails
-            this->reconnect();
+            //this->reconnect();
         }
     }
 }
@@ -105,6 +118,59 @@ const std::string& Client::receiveMessages()
             this->reconnect(); // Attempt to reconnect on disconnect
         }
     }
+}
+
+void Client::sendMessageUDP(const std::string& message)
+{
+    try {
+        // הפונקציה `send` ב-SFML 3 ל-UDP השתנתה להיות על פי פרמטרים חדשים
+    
+        sf::IpAddress serverIp(IpToUint32_t(m_serverIp));
+        unsigned short serverPort = m_serverPort;
+        std::cout << "Sending UDP message to: " << m_serverIp << ":" << m_serverPort << "\n";  // הדפסה לוג
+        // שלח את ההודעה לשרת ב-UDP
+        sf::Socket::Status status = m_udpSocket.send(message.c_str(), message.size(), serverIp, serverPort);
+        if (status != sf::Socket::Status::Done) {
+            throw std::runtime_error("Client: Failed to send UDP message");
+        }
+    }
+    catch (const std::exception& e) {
+        std::cerr << e.what() << "\n";
+        this->reconnect();
+    }
+}
+
+std::string Client::receiveMessageUDP()
+{
+    try {
+        char buffer[1024];
+        std::size_t received;
+        std::optional<sf::IpAddress> sender;
+        unsigned short senderPort;
+
+        m_udpSocket.bind(m_serverPort);  // קבע את הפורט של ה-UDP
+        m_udpSocket.setBlocking(false);  // שמור על חיבור לא חסום
+       
+        // קבלה של הודעה ב-UDP
+        sf::Socket::Status status = m_udpSocket.receive(buffer, sizeof(buffer), received, sender, senderPort);
+        if (status == sf::Socket::Status::Done) {
+            std::string message(buffer, received);
+            std::cout << "Client: Received from UDP: " << message << "\n";
+            return message;
+        }
+        else if (status == sf::Socket::Status::Disconnected) {
+            throw std::runtime_error("Client: Disconnected from UDP server");
+        }
+		else if (status == sf::Socket::Status::Error) {
+			throw std::runtime_error("Client: Error receiving UDP message");
+		}
+    }
+    catch (const std::exception& e) {
+        std::cerr << e.what() << "\n";
+        this->reconnect();
+    }
+
+    return "";
 }
 
 const std::string& Client::receiveLargeMessages()
@@ -157,6 +223,54 @@ json Client::ReciveMapData()
 		return nullptr;
 	}
 	return mapData;
+}
+
+void Client::InitPlayer(json player_data)
+{
+    json send = {
+        {"action", "InitPlayer"},
+        {"data", player_data}
+    };
+    this->sendMessage(send.dump());
+    std::string message = this->receiveMessages();
+    json player;
+    try {
+        player = json::parse(message);
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Client:InitPlayer:Error parsing JSON: " << e.what() << "\n";
+        return;
+    }
+    std::cout << "Client:InitPlayer: " << player.dump() << "\n";
+}
+
+void Client::UpdatePlayer(json player_data)
+{
+    json send = {
+		{"action", "UpdatePlayer"},
+		{"data", player_data}
+    };
+	this->sendMessageUDP(send.dump());
+}
+
+json Client::ReceivePlayer()
+{
+    json send = {
+        {"action", "SendPlayer"}
+    };
+    this->sendMessage(send.dump());
+    std::string message = this->receiveMessages();
+    json player;
+    try {
+        player = json::parse(message);
+		std::cout << "Client:ReceivePlayer: " << player.dump() << "\n";
+        return player;
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Client:InitPlayer:Error parsing JSON: " << e.what() << "\n";
+        return json::object();
+    }
+   
 }
 
 

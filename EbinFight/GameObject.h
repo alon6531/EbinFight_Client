@@ -22,10 +22,12 @@ public:
 
 
 
-	MovementComponent* GetMovementComponent() { return m_movementComponent; }
-	HitBoxComponent* GetHitBoxComponent() { return p_hitBoxComponent; }
+	MovementComponent* GetMovementComponent();
+	HitBoxComponent* GetHitBoxComponent();
 
 	sf::Sprite* GetSprite() { return p_sprite; }
+
+	static GameObject* CreateObject(json object_data);
 
 private:
 	void InitTexture(const std::string& texture_filePath);

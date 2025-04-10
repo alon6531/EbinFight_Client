@@ -4,7 +4,7 @@
 int main()
 {
     float i = 0;
-    Client client = Client();
+    Client client = Client("alon");
     
     if (client.connect())
     {

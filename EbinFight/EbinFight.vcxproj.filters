@@ -16,9 +16,6 @@
     <Filter Include="States">
       <UniqueIdentifier>{92bd7a8d-737a-40a0-99af-bafd0edf5a41}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Client">
-      <UniqueIdentifier>{577b2e88-6b16-4a06-ba3f-ec2199c6e12e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="General">
       <UniqueIdentifier>{cb665ba1-6d9d-4508-983e-443072063cd3}</UniqueIdentifier>
     </Filter>
@@ -31,6 +28,9 @@
     <Filter Include="Game\Components">
       <UniqueIdentifier>{1c774314-6495-4328-85fa-5e9708ff07e2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Components\Client">
+      <UniqueIdentifier>{577b2e88-6b16-4a06-ba3f-ec2199c6e12e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="State.cpp">
@@ -40,10 +40,10 @@
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="Client.cpp">
-      <Filter>Client</Filter>
+      <Filter>Game\Components\Client</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>Client</Filter>
+      <Filter>Game\Components\Client</Filter>
     </ClCompile>
     <ClCompile Include="Globals.cpp">
       <Filter>General</Filter>
@@ -70,7 +70,7 @@
       <Filter>Game\Components</Filter>
     </ClCompile>
     <ClCompile Include="MovementComponent.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Game\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -81,7 +81,7 @@
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="Client.h">
-      <Filter>Client</Filter>
+      <Filter>Game\Components\Client</Filter>
     </ClInclude>
     <ClInclude Include="Globals.h">
       <Filter>General</Filter>
@@ -111,7 +111,7 @@
       <Filter>Game\Components</Filter>
     </ClInclude>
     <ClInclude Include="MovementComponent.h">
-      <Filter>Header Files</Filter>
+      <Filter>Game\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

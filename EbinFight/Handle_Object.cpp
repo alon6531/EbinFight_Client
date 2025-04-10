@@ -17,16 +17,6 @@ void Handle_Object::HandleObjectsComps(const std::string& obj_name, const json& 
 }
 
 
-void Handle_Object::HandlePlayer()
-{
-
-	// Initialize camera centered on player position
-	
-	std::cout << "Object_Manager:Added Player" << "\n";
-	sf::Vector2f playerPos = m_objects["player"]->GetSprite()->getPosition();
-	
-}
-
 bool Handle_Object::FindObject(const std::string& object_name)
 {
 	auto it = m_objects.find(object_name);
@@ -51,28 +41,36 @@ void Handle_Object::AddObject(const std::string& obj_name, const GameObject& obj
 	}
 }
 
+void Handle_Object::AddPlayer(const std::string& obj_name, const GameObject& obj)
+{
+	m_player = new GameObject(obj);
+}
+
 void Handle_Object::Handle_Events(const sf::Event& event, Handle_Controls& m_handle_controls, float dt)
 {
-	auto keyPressed = event.getIf<sf::Event::KeyPressed>(); 
-	if (keyPressed)
+	if (m_player)
 	{
-		if (keyPressed->code == m_handle_controls.GetControls("Up"))
+		auto keyPressed = event.getIf<sf::Event::KeyPressed>();
+		if (keyPressed)
 		{
-			m_objects["player"]->GetMovementComponent()->Move(Up);
-		}
-		else if (keyPressed->code == m_handle_controls.GetControls("Down"))
-		{
-			m_objects["player"]->GetMovementComponent()->Move(Down);
-		}
-		else if (keyPressed->code == m_handle_controls.GetControls("Left"))
-		{
-			m_objects["player"]->GetMovementComponent()->Move(Left);
-		}
-		else if (keyPressed->code == m_handle_controls.GetControls("Right"))
-		{
-			m_objects["player"]->GetMovementComponent()->Move(Right);
-		}
+			if (keyPressed->code == m_handle_controls.GetControls("Up"))
+			{
+				m_player->GetMovementComponent()->Move(Up);
+			}
+			else if (keyPressed->code == m_handle_controls.GetControls("Down"))
+			{
+				m_player->GetMovementComponent()->Move(Down);
+			}
+			else if (keyPressed->code == m_handle_controls.GetControls("Left"))
+			{
+				m_player->GetMovementComponent()->Move(Left);
+			}
+			else if (keyPressed->code == m_handle_controls.GetControls("Right"))
+			{
+				m_player->GetMovementComponent()->Move(Right);
+			}
 
+		}
 	}
 }
 
@@ -92,19 +90,27 @@ void Handle_Object::Update(float dt)
 		object.second->Update(dt);
 		
 	}
-	if (m_objects.find("player") != m_objects.end())
+	if (m_player)
 	{
+		m_player->Update(dt);
+		json player_data = {
+			{"action", "UpdatePlayer"},
+			{"data", {
+				{"pos", {m_player->GetSprite()->getPosition().x, m_player->GetSprite()->getPosition().y}},
+				{"scale", {m_player->GetSprite()->getScale().x, m_player->GetSprite()->getScale().y}}
+			}}
+		};
+		m_client.UpdatePlayer(player_data);
+
+
+
 		for (auto& object : m_objects)
 		{
-			//check if object is not player
-			if (object.first == "player")
-				continue;
 			
-			//if player collide with object he couldnt go through object
 			sf::FloatRect otherRect = object.second->GetHitBoxComponent()->GetGlobalBounds();
-			if (m_objects["player"]->GetHitBoxComponent()->IsCollide(otherRect))
+			if (m_player->GetHitBoxComponent()->IsCollide(otherRect))
 			{
-				m_objects["player"]->GetMovementComponent()->revertToPreviousPosition();
+				m_player->GetMovementComponent()->revertToPreviousPosition();
 			}
 			
 		}
@@ -120,6 +126,10 @@ void Handle_Object::Render(sf::RenderWindow& window)
 		object.second->Render(window, m_camera);
 		
 	}
+
+	if (m_player)
+		m_player->Render(window, m_camera);
+
 }
 
 

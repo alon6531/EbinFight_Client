@@ -19,6 +19,7 @@ public:
 
 private:
 	void Init();
+	void InitPlayer();
 
 private:
 	Map* map;

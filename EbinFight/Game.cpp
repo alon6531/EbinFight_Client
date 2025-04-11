@@ -15,7 +15,7 @@ void Game::Init()
 	map = new Map(map_data, handleObjects);
 
 	
-	// this->InitPlayer();
+	this->InitPlayer();
 	json player_data = p_client.ReceivePlayer();
 
 	std::string player_name = player_data.begin().key();               // "alon"
@@ -34,8 +34,8 @@ void Game::InitPlayer()
 		{"pos", {600.f, 400.f}},
 		{"scale", {0.3f, 0.3f}},
 		{"origin", "center"},
-		{"hitboxComponent", {true, {0.f, 0.f}, {0, 0}}},
-		{"movement_speedComponent", {true, 20}}
+		{"HitBoxComponent", {true, {0.f, 0.f}, {0, 0}}},
+		{"MovementComponent", {true, 20}}
 	};
 	p_client.InitPlayer(player_data);
 }

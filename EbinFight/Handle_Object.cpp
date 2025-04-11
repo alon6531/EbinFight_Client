@@ -83,24 +83,24 @@ void Handle_Object::Update(float dt)
 {
 	//if (this->FindObject("player"))
 		//this->HandleCamera(dt);
-	m_client.ReceiveAllPlayers();
-	//for (auto& player : players)
-	//{
-	//	std::string player_name = player.begin().key();
-	//	json player_info = player[player_name]["data"];
-	//	if (m_objects.find(player_name) == m_objects.end())
-	//	{
-	//		GameObject* new_player = GameObject::CreateObject(player_info);
-	//		this->AddObject(player_name, *new_player);
-	//	}
-	//	else
-	//	{
-	//		// delete old player
-	//		delete m_objects[player_name];
-	//		m_objects.erase(player_name);
-	//	}
+	json players = m_client.ReceiveAllPlayers();
+	for (auto& player : players)
+	{
+		std::string player_name = player.begin().key();
+		json player_info = player[player_name]["data"];
+		if (m_objects.find(player_name) == m_objects.end())
+		{
+			GameObject new_player = *GameObject::CreateObject(player_info);
+			this->AddObject(player_name, new_player);
+		}
+		else
+		{
+			// delete old player
+			delete m_objects[player_name];
+			m_objects.erase(player_name);
+		}
 
-	//}
+	}
 	
 	for (auto& object : m_objects)
 	{
@@ -118,7 +118,7 @@ void Handle_Object::Update(float dt)
 				{"scale", {m_player->GetSprite()->getScale().x, m_player->GetSprite()->getScale().y}}
 			}}
 		};
-		//m_client.UpdatePlayer(player_data);
+		m_client.UpdatePlayer(player_data);
 
 
 

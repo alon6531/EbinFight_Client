@@ -1,12 +1,22 @@
 #include "Client.h"
-#include <iostream>
+#include "Engine.h"
 
 
 Client::Client(const std::string& username)
+	: m_username(username)
 {
-	m_username = username;
-    m_udpSocket.setBlocking(false);
-    m_reconnCounter = 5;
+}
+
+void Client::Start()
+{
+    this->Init();
+
+	if (this->connect())
+	{
+		Engine* app = new Engine(*this);
+		app->Run();
+        delete app;
+	}
 }
 
 void Client::Init()
@@ -17,7 +27,8 @@ void Client::Init()
     {
 
         try {
-            m_serverIp = lines[0];
+
+            m_serverIp = sf::IpAddress(IpToUint32_t(lines[0]));
             m_serverPort = static_cast<short>(std::stoi(lines[1]));
             m_reconnCounter = static_cast<int>(std::stoi(lines[2]));
         }
@@ -25,27 +36,35 @@ void Client::Init()
             std::cerr << "Client:Error parsing configuration: " << e.what() << std::endl;
             // You c
         }
-        std::cout << "Client:serverIp: " << m_serverIp << "\n";
+        std::cout << "Client:serverIp: " << m_serverIp.value() << "\n";
         std::cout << "Client:serverPort: " << m_serverPort << "\n";
     }
+
+    m_udpSocket.setBlocking(false);
+
+    m_reconnCounter = 5;
 }
-
-
 
 bool Client::connect()
 {
-    this->Init();
-    
-    std::uint32_t ip = IpToUint32_t(m_serverIp);
-    
-    sf::Socket::Status status = m_socket.connect(sf::IpAddress(ip), m_serverPort);
+   
+	if (!m_serverIp.has_value() || m_serverPort == 0)
+	{
+		std::cerr << "Client:Invalid server IP or port.\n";
+		return false;
+	}
+
+
+    sf::Socket::Status status = m_socket.connect(m_serverIp.value(), m_serverPort);
     if (status != sf::Socket::Status::Done)
     {
         std::cerr << "Client:Failed to connect to server.\n";
         return false;
     }
+
+
     this->InitUser();
-    std::cout << "Client: " << m_username <<"Connected to server at " << m_serverIp << ":" << m_serverPort << "\n";
+    std::cout << "Client: " << m_username <<" Connected to server at " << m_serverIp.value().toString() << ":" << m_serverPort << "\n";
     return true;
 }
 
@@ -55,26 +74,12 @@ void Client::InitUser()
 		   {"action", "InitUser"},
 		   {"data", m_username}
 	};
-	this->sendMessage(send.dump());
+	this->sendMessageTCP(send.dump());
 }
 
-void Client::reconnect()
-{
-    
-    std::cout << "Client:Attempting to reconnect...\n";
-    while (!connect() && m_reconnCounter > 0) {
-        std::this_thread::sleep_for(std::chrono::seconds(2));  // Pause 5 seconds before retry
-        m_reconnCounter--;
-    }
 
-    std::cout << "Client:faild to reconnect: \n";
-    this->Disconnect();
-   
-   
-   
-}
 
-void Client::sendMessage(const std::string& message)
+void Client::sendMessageTCP(const std::string& message)
 {
     try {
         sf::Socket::Status status = m_socket.send(message.c_str(), message.size());
@@ -82,6 +87,8 @@ void Client::sendMessage(const std::string& message)
         {
             throw std::runtime_error("Client:Failed to send message");
         }
+		std::cout << "Client:Sent message: " << message << "\n";
+
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << "\n";
@@ -92,7 +99,7 @@ void Client::sendMessage(const std::string& message)
     }
 }
 
-const std::string& Client::receiveMessages()
+const std::string& Client::receiveMessagesTCP()
 {
     try {
         char buffer[1024];
@@ -109,13 +116,12 @@ const std::string& Client::receiveMessages()
         }
         else if (status == sf::Socket::Status::Disconnected)
         {
-            throw std::runtime_error("Client:Disconnected from server");
+            throw std::runtime_error("Client:receiveMessagesTCP::Disconnected from server");
         }
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << "\n";
-        if (e.what() == std::string("Client:Disconnected from server")) {
-            this->reconnect(); // Attempt to reconnect on disconnect
+        if (e.what() == std::string("Client:receiveMessagesTCP::Disconnected from server")) {
         }
     }
 }
@@ -125,46 +131,48 @@ void Client::sendMessageUDP(const std::string& message)
     try {
         // הפונקציה `send` ב-SFML 3 ל-UDP השתנתה להיות על פי פרמטרים חדשים
     
-        sf::IpAddress serverIp(IpToUint32_t(m_serverIp));
         unsigned short serverPort = m_serverPort;
-        std::cout << "Sending UDP message to: " << m_serverIp << ":" << m_serverPort << "\n";  // הדפסה לוג
+        std::cout << "Sending UDP message to: " << m_serverIp.value().toString() << ":" << m_serverPort << "\n";  // הדפסה לוג
         // שלח את ההודעה לשרת ב-UDP
-        sf::Socket::Status status = m_udpSocket.send(message.c_str(), message.size(), serverIp, serverPort);
+        sf::Socket::Status status = m_udpSocket.send(message.c_str(), message.size(), m_serverIp.value(), serverPort);
         if (status != sf::Socket::Status::Done) {
             throw std::runtime_error("Client: Failed to send UDP message");
         }
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << "\n";
-        this->reconnect();
     }
 }
 
 std::string Client::receiveMessageUDP()
 {
-    try {
-        char buffer[1024];
-        std::size_t received;
-        std::optional<sf::IpAddress> sender;
-        unsigned short senderPort;
+    char buffer[1024];
+    std::size_t received;
+    std::optional<sf::IpAddress> sender;
+    unsigned short senderPort;
 
-        // קבלה של הודעה ב-UDP
-        sf::Socket::Status status = m_udpSocket.receive(buffer, sizeof(buffer), received, sender, senderPort);
-        if (status == sf::Socket::Status::Done) {
-            std::string message(buffer, received);
-            std::cout << "Client: Received from UDP: " << message << "\n";
-            return message;
-        }
-        else if (status == sf::Socket::Status::Disconnected) {
-            throw std::runtime_error("Client: Disconnected from UDP server");
-        }
-		else if (status == sf::Socket::Status::Error) {
-			throw std::runtime_error("Client: Error receiving UDP message");
-		}
+    sf::Socket::Status status = m_udpSocket.receive(buffer, sizeof(buffer), received, sender, senderPort);
+
+    if (status == sf::Socket::Status::Done)
+    {
+        std::string message(buffer, received);
+        std::cout << "Client: Received UDP message from " << sender.value().toString() << ":" << senderPort << " - " << message << "\n";
+        return message;
     }
-    catch (const std::exception& e) {
-        std::cerr << e.what() << "\n";
-        this->reconnect();
+    else if (status == sf::Socket::Status::NotReady)
+    {
+        // Non-blocking socket has no data right now.
+        return "";
+    }
+    else if (status == sf::Socket::Status::Disconnected)
+    {
+        std::cerr << "Client: Disconnected from server (UDP)\n";
+        return "";
+    }
+    else if (status == sf::Socket::Status::Error)
+    {
+        std::cerr << "Client: Error receiving UDP data\n";
+        return "";
     }
 
     return "";
@@ -193,7 +201,6 @@ const std::string& Client::receiveLargeMessages()
     catch (const std::exception& e) {
         std::cerr << e.what() << "\n";
         if (e.what() == std::string("Client:Disconnected from server")) {
-            this->reconnect(); // Attempt to reconnect on disconnect
         }
     }
 }
@@ -209,17 +216,19 @@ json Client::ReciveMapData()
     json send = {
 		{"action", "SendMapData"}
 	};
-	this->sendMessage(send.dump());
-	std::string message = this->receiveLargeMessages();
-	json mapData;
+	this->sendMessageTCP(send.dump());
+
+	std::string received = this->receiveLargeMessages();
 	try {
-		mapData = json::parse(message);
+        json mapData = json::parse(received);
+		std::cout << "Client: Map received successfully" << "\n";
+        return mapData;
 	}
 	catch (const std::exception& e) {
 		std::cerr << "Client:ReciveMapData:Error parsing JSON: " << e.what() << "\n";
-		return nullptr;
+		return json::object();
 	}
-	return mapData;
+	
 }
 
 void Client::InitPlayer(json player_data)
@@ -228,22 +237,13 @@ void Client::InitPlayer(json player_data)
         {"action", "InitPlayer"},
         {"data", player_data}
     };
-    this->sendMessage(send.dump());
-    std::string message = this->receiveMessages();
-    json player;
-    try {
-        player = json::parse(message);
-    }
-    catch (const std::exception& e) {
-        std::cerr << "Client:InitPlayer:Error parsing JSON: " << e.what() << "\n";
-        return;
-    }
-    std::cout << "Client:InitPlayer: " << player.dump() << "\n";
+    this->sendMessageTCP(send.dump());
 }
 
 void Client::UpdatePlayer(json player_data)
 {
     json send = {
+		{"username", m_username},
 		{"action", "UpdatePlayer"},
 		{"data", player_data}
     };
@@ -253,6 +253,7 @@ void Client::UpdatePlayer(json player_data)
 json Client::ReceiveAllPlayers()
 {
     json send = {
+        {"username", m_username},
         {"action", "SendAllPlayers"}
     };
 
@@ -286,8 +287,8 @@ json Client::ReceivePlayer()
         {"action", "SendPlayer"},
 	  
     };
-    this->sendMessage(send.dump());
-    std::string message = this->receiveMessages();
+    this->sendMessageTCP(send.dump());
+    std::string message = this->receiveMessagesTCP();
     json player;
     try {
         player = json::parse(message);

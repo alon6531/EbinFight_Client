@@ -87,19 +87,19 @@ void Handle_Object::Update(float dt)
 	for (auto& player : players)
 	{
 		std::string player_name = player.begin().key();
-		json player_info = player[player_name]["data"];
-		if (m_objects.find(player_name) == m_objects.end())
+
+		// Always create the new GameObject
+		GameObject* new_player = GameObject::CreateObject(player);
+
+		// If player exists, delete the old one
+		if (m_objects.find(player_name) != m_objects.end())
 		{
-			GameObject new_player = *GameObject::CreateObject(player_info);
-			this->AddObject(player_name, new_player);
-		}
-		else
-		{
-			// delete old player
 			delete m_objects[player_name];
 			m_objects.erase(player_name);
 		}
 
+		// Add the new player
+		this->AddObject(player_name, *new_player);
 	}
 	
 	for (auto& object : m_objects)
@@ -112,11 +112,9 @@ void Handle_Object::Update(float dt)
 	{
 		m_player->Update(dt);
 		json player_data = {
-			{"action", "UpdatePlayer"},
-			{"data", {
-				{"pos", {m_player->GetSprite()->getPosition().x, m_player->GetSprite()->getPosition().y}},
-				{"scale", {m_player->GetSprite()->getScale().x, m_player->GetSprite()->getScale().y}}
-			}}
+			{"pos", {m_player->GetSprite()->getPosition().x, m_player->GetSprite()->getPosition().y}},
+			{"scale", {m_player->GetSprite()->getScale().x, m_player->GetSprite()->getScale().y}}
+			
 		};
 		m_client.UpdatePlayer(player_data);
 
@@ -124,11 +122,13 @@ void Handle_Object::Update(float dt)
 
 		for (auto& object : m_objects)
 		{
-			
-			sf::FloatRect otherRect = object.second->GetHitBoxComponent()->GetGlobalBounds();
-			if (m_player->GetHitBoxComponent()->IsCollide(otherRect))
+			if (m_player->GetHitBoxComponent() && object.second->GetHitBoxComponent())
 			{
-				m_player->GetMovementComponent()->revertToPreviousPosition();
+				sf::FloatRect otherRect = object.second->GetHitBoxComponent()->GetGlobalBounds();
+				if (m_player->GetHitBoxComponent()->IsCollide(otherRect))
+				{
+					m_player->GetMovementComponent()->revertToPreviousPosition();
+				}
 			}
 			
 		}

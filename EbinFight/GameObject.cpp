@@ -27,16 +27,9 @@ MovementComponent* GameObject::GetMovementComponent()
 
 HitBoxComponent* GameObject::GetHitBoxComponent()
 {
-	if (p_hitBoxComponent)
-	{
-		return p_hitBoxComponent;
-	}
-	else
-	{
-		std::cerr << "GameObject:ERROR::HitBoxComponent is null" << "\n";
-		return nullptr;
-	}
 	
+	return p_hitBoxComponent;
+
 }
 
 void GameObject::InitTexture(const std::string& texture_filePath)

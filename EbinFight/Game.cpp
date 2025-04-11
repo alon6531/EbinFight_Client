@@ -19,7 +19,7 @@ void Game::Init()
 	json player_data = p_client.ReceivePlayer();
 
 	std::string player_name = player_data.begin().key();               // "alon"
-	json player_info = player_data[player_name]["data"];              // { pos, speed, ... }
+	json player_info = player_data[player_name];              // { pos, speed, ... }
 
 	GameObject player = *GameObject::CreateObject(player_info);
 

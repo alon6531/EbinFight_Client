@@ -99,63 +99,10 @@ void Map::LoadObjects(const json& map_data)
 	for (auto object : objects)
 	{
 		std::string objectName = object["name"].get<std::string>();
-		sf::Sprite objectSprite(m_objectTexture);
-		if (object["texture_pos"].is_array())
-		{
-			sf::Vector2i texture_pos(
-				object["texture_pos"][0].get<int>(),
-				object["texture_pos"][1].get<int>());
-			sf::IntRect textureRect = sf::IntRect(texture_pos, sf::Vector2i(m_tileWidth, m_tileHeight));
-			objectSprite.setTextureRect(textureRect);
-		}
-		if (object["position"].is_array())
-		{
-			sf::Vector2f position(
-				object["position"][0].get<float>(),
-				object["position"][1].get<float>()
-			);
-			objectSprite.setPosition(position);
-		}
-		if (object["scale"].is_array())
-		{
-			sf::Vector2f scale(
-				object["scale"][0].get<float>(),
-				object["scale"][1].get<float>()
-			);
-
-			objectSprite.setScale(sf::Vector2f(scale.x, scale.y));
-		}
-		if (object["origin"].is_array())
-		{
-			sf::Vector2f origin(
-				object["origin"][0].get<float>(),
-				object["origin"][1].get<float>()
-			);
-			objectSprite.setOrigin(origin);
-		}
-		GameObject gameObject = GameObject(objectSprite);
-		if (object["hitBoxComponent"].is_array())
-		{
-			bool isHitBox = object["hitBoxComponent"][0].get<bool>();
-			if (isHitBox)
-			{
-				sf::Vector2f hitBoxPos(
-					object["hitBoxComponent"][1][0].get<float>(),
-					object["hitBoxComponent"][1][1].get<float>()
-				);
-				sf::Vector2f hitBoxSize(
-					object["hitBoxComponent"][2][0].get<float>(),
-					object["hitBoxComponent"][2][1].get<float>()
-				);
-				gameObject.AddHitBoxComponent(hitBoxPos, hitBoxSize);
-			}
-
-
-			//objectSprite.setSize(hitBoxSize);
-		}
-
-
-
+		
+		
+		GameObject gameObject = GameObject::CreateObject(object);
+	
 		m_handle_objects.AddObject(objectName, gameObject);
 	}
 }

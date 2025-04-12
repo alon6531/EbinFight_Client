@@ -2,14 +2,39 @@
 
 GameObject::GameObject(const std::string& texture_filePath, const sf::Vector2f& pos, const sf::Vector2f& scale)	
 {
-	this->InitTexture(texture_filePath);
 
+	this->InitTexture(texture_filePath);
 	this->Init(pos, scale);
 }
 
 GameObject::GameObject(const sf::Sprite& sprite) : p_sprite(new sf::Sprite(sprite))
 {
 	m_spriteTexure = new sf::Texture(sprite.getTexture());
+}
+
+GameObject::~GameObject()
+{
+	
+	if (m_spriteTexure)
+	{
+		m_spriteTexure = NULL;
+		delete m_spriteTexure;
+	}
+	if (p_sprite)
+	{
+		p_sprite = NULL;
+		delete p_sprite;
+	}
+	if (m_movementComponent)
+	{
+		m_movementComponent = NULL;
+		delete m_movementComponent;
+	}
+	if (p_hitBoxComponent)
+	{
+		p_hitBoxComponent = NULL;
+		delete p_hitBoxComponent;
+	}
 }
 
 MovementComponent* GameObject::GetMovementComponent()
@@ -32,6 +57,11 @@ HitBoxComponent* GameObject::GetHitBoxComponent()
 
 }
 
+AnimationComponent* GameObject::GetAnimationComponent()
+{
+	return p_animationComponent;
+}
+
 void GameObject::InitTexture(const std::string& texture_filePath)
 {
 	m_spriteTexure = new sf::Texture();
@@ -41,11 +71,14 @@ void GameObject::InitTexture(const std::string& texture_filePath)
 		std::cerr << "GameObject:ERROR::CANT_OPEN_FILE: " << texture_filePath << std::endl;
 		m_spriteTexure = NULL;
 	}
+	//std::cout << "GameObject:OPEN_FILE: " << texture_filePath << std::endl;
 }
 
 void GameObject::Init(const sf::Vector2f& pos, const sf::Vector2f& scale)
 {
-	if (m_spriteTexure)
+
+	
+	if (m_spriteTexure && !p_sprite)
 		p_sprite = new sf::Sprite(*m_spriteTexure);
 	else
 		return;
@@ -63,6 +96,10 @@ void GameObject::Update(float dt)
 	if (m_movementComponent)
 	{
 		m_movementComponent->Update(dt);
+	}
+	if (p_animationComponent)
+	{
+		p_animationComponent->Update(dt);
 	}
 }
 
@@ -102,7 +139,13 @@ void GameObject::AddMovementComponent(float speed)
 		m_movementComponent = new MovementComponent(*p_sprite, speed);
 }
 
-GameObject* GameObject::CreateObject(json object_data)
+void GameObject::AddAnimationComponent(float frameTime)
+{
+	if (p_sprite)
+		p_animationComponent = new AnimationComponent(*p_sprite, frameTime);
+}
+
+GameObject GameObject::CreateObject(json object_data)
 {
 	try {
 
@@ -110,25 +153,27 @@ GameObject* GameObject::CreateObject(json object_data)
 		std::string texture_filePath = object_data["texture"].get<std::string>();
 		sf::Vector2f playerPos;
 		sf::Vector2f playerScale;
-		if (object_data["pos"].is_array())
+		if (object_data.contains("pos") && object_data["pos"].is_array())
 		{
 			playerPos = sf::Vector2f(
 				object_data["pos"][0].get<float>()
 				, object_data["pos"][1].get<float>());
 		}
-		if (object_data["scale"].is_array())
+		if (object_data.contains("scale") && object_data["scale"].is_array())
 		{
 			playerScale = sf::Vector2f(
 				object_data["scale"][0].get<float>()
 				, object_data["scale"][1].get<float>());
 		}
-		GameObject* newObject = new GameObject(texture_filePath, playerPos, playerScale);
-		if (object_data["origin"].get<std::string>() == "center")
+		GameObject newObject = GameObject(texture_filePath, playerPos, playerScale);
+		if (object_data.contains("origin") &&  object_data["origin"].get<std::string>() == "center")
 		{
-			newObject->GetSprite()->setOrigin(newObject->GetSprite()->getLocalBounds().getCenter());
+			newObject.GetSprite()->setOrigin(newObject.GetSprite()->getLocalBounds().getCenter());
 		}
 		
-		if (object_data["HitBoxComponent"].is_array())
+	
+		
+		if (object_data.contains("HitBoxComponent") && object_data["HitBoxComponent"].is_array())
 		{
 			if (object_data["HitBoxComponent"][0].get<bool>())
 			{
@@ -147,26 +192,114 @@ GameObject* GameObject::CreateObject(json object_data)
 						, object_data["HitBoxComponent"][2][1].get<float>());
 				}
 
-				newObject->AddHitBoxComponent(hitboxOffset, hitboxSize);
+				newObject.AddHitBoxComponent(hitboxOffset, hitboxSize);
 			}
 
 		}
-		if (object_data["MovementComponent"].is_array())
+		if (object_data.contains("MovementComponent") && object_data["MovementComponent"].is_array())
 		{
 			if (object_data["MovementComponent"][0].get<bool>())
 			{
 				float speed = object_data["MovementComponent"][1].get<float>();
 
-				newObject->AddMovementComponent(speed);
+				newObject.AddMovementComponent(speed);
 			}
 
+		}
+		if (object_data.contains("AnimationComponent") && object_data["AnimationComponent"].is_array())
+		{
+			
+			if (object_data["AnimationComponent"][0].get<bool>())
+			{
+				float frameTime = object_data["AnimationComponent"][1].get<float>();
+
+				newObject.AddAnimationComponent(frameTime);
+				if (object_data["AnimationComponent"][2].is_array())
+				{
+					auto& frames = object_data["AnimationComponent"][2];
+					for (auto frame : frames)
+					{
+						sf::IntRect frameRect(
+							sf::Vector2i(frame[0][0].get<int>(), frame[0][1].get<int>()),
+							sf::Vector2i(frame[1][0].get<int>(), frame[1][1].get<int>()));
+						//newObject.GetAnimationComponent()->AddFrame(frameRect);
+						newObject.GetSprite()->setTextureRect(frameRect);
+					}
+				}
+			}
+
+		}
+		if (object_data.contains("origin") && object_data["origin"].get<std::string>() == "center")
+		{
+			newObject.GetSprite()->setOrigin(newObject.GetSprite()->getLocalBounds().getCenter());
 		}
 		return newObject;
 	}
 	catch (const std::exception& e) {
 		std::cerr << "GameObject:Error creating object: " << e.what() << std::endl;
-		return nullptr;
 	}
 
-	return nullptr;
 }
+
+void GameObject::UpdateObjectData(json object_data)
+{
+	try {
+
+
+		
+		sf::Vector2f playerPos;
+		sf::Vector2f playerScale;
+		if (object_data["pos"].is_array())
+		{
+			playerPos = sf::Vector2f(
+				object_data["pos"][0].get<float>()
+				, object_data["pos"][1].get<float>());
+		}
+		if (object_data["scale"].is_array())
+		{
+			playerScale = sf::Vector2f(
+				object_data["scale"][0].get<float>()
+				, object_data["scale"][1].get<float>());
+		}
+		p_sprite->setPosition(playerPos);
+		p_sprite->setScale(playerScale);
+	
+	/*	if (!gameObject.GetHitBoxComponent() && object_data["HitBoxComponent"].is_array())
+		{
+			if (object_data["HitBoxComponent"][0].get<bool>())
+			{
+				sf::Vector2f hitboxOffset;
+				sf::Vector2f hitboxSize;
+				if (object_data["HitBoxComponent"][1].is_array())
+				{
+					hitboxOffset = sf::Vector2f(
+						object_data["HitBoxComponent"][1][0].get<float>()
+						, object_data["HitBoxComponent"][1][1].get<float>());
+				}
+				if (object_data["HitBoxComponent"][2].is_array())
+				{
+					hitboxSize = sf::Vector2f(
+						object_data["HitBoxComponent"][2][0].get<float>()
+						, object_data["HitBoxComponent"][2][1].get<float>());
+				}
+
+				gameObject.AddHitBoxComponent(hitboxOffset, hitboxSize);
+			}
+
+		}
+		if (!gameObject.GetHitBoxComponent() && object_data["MovementComponent"].is_array())
+		{
+			if (object_data["MovementComponent"][0].get<bool>())
+			{
+				float speed = object_data["MovementComponent"][1].get<float>();
+
+				gameObject.AddMovementComponent(speed);
+			}
+
+		}*/
+	}
+	catch (const std::exception& e) {
+		std::cerr << "GameObject:Error creating object: " << e.what() << std::endl;
+	}
+}
+

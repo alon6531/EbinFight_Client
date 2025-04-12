@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="States">
-      <UniqueIdentifier>{92bd7a8d-737a-40a0-99af-bafd0edf5a41}</UniqueIdentifier>
-    </Filter>
     <Filter Include="General">
       <UniqueIdentifier>{cb665ba1-6d9d-4508-983e-443072063cd3}</UniqueIdentifier>
     </Filter>
@@ -28,22 +25,22 @@
     <Filter Include="Game\Components">
       <UniqueIdentifier>{1c774314-6495-4328-85fa-5e9708ff07e2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Components\Client">
+    <Filter Include="Engine\Client">
       <UniqueIdentifier>{577b2e88-6b16-4a06-ba3f-ec2199c6e12e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HomePage">
+      <UniqueIdentifier>{54926e2c-f0f3-4df5-9aa6-ad1dfafd4257}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="widgets">
+      <UniqueIdentifier>{7458c6d3-f8ee-4a83-84b6-bbd4012f9d6a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="State.cpp">
-      <Filter>States</Filter>
-    </ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="Client.cpp">
-      <Filter>Game\Components\Client</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Game\Components\Client</Filter>
+      <Filter>Engine\Client</Filter>
     </ClCompile>
     <ClCompile Include="Globals.cpp">
       <Filter>General</Filter>
@@ -72,16 +69,31 @@
     <ClCompile Include="MovementComponent.cpp">
       <Filter>Game\Components</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="HomePage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="InputField.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationComponent.cpp">
+      <Filter>Game\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="State.h">
-      <Filter>States</Filter>
-    </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="Client.h">
-      <Filter>Game\Components\Client</Filter>
+      <Filter>Engine\Client</Filter>
     </ClInclude>
     <ClInclude Include="Globals.h">
       <Filter>General</Filter>
@@ -111,6 +123,21 @@
       <Filter>Game\Components</Filter>
     </ClInclude>
     <ClInclude Include="MovementComponent.h">
+      <Filter>Game\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="HomePage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="InputField.h">
+      <Filter>widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationComponent.h">
       <Filter>Game\Components</Filter>
     </ClInclude>
   </ItemGroup>

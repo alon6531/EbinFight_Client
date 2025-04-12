@@ -14,6 +14,11 @@ public:
 
 	virtual void OnExitState() = 0;
 protected:
+	void UpdateMousePosition(sf::RenderWindow& window);
+
+
+protected:
+	sf::Vector2i p_mousePos;
 	std::stack<State*>& p_currentState;
 	Client& p_client;
 	bool isExitState;

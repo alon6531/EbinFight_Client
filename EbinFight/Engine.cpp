@@ -16,7 +16,7 @@ void Engine::Run()
     {
         while (m_window->isOpen())
         {
-            m_dt = m_clock.restart().asMicroseconds();
+            m_dt = m_clock.restart().asMilliseconds();
 
             this->Handle_Events();
 
@@ -84,7 +84,7 @@ void Engine::Init()
 
     m_handle_controls = new Handle_Controls(handleControlsFilePath);
 
-    m_state.push(new Game(m_client, m_state));
+    m_state.push(new HomePage(m_client, m_state));
 }
 
 

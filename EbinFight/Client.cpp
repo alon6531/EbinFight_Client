@@ -2,9 +2,9 @@
 #include "Engine.h"
 
 
-Client::Client(const std::string& username)
-	: m_username(username)
+Client::Client()
 {
+    m_username="";
 }
 
 void Client::Start()
@@ -13,8 +13,8 @@ void Client::Start()
 
 	if (this->connect())
 	{
-		Engine* app = new Engine(*this);
-		app->Run();
+        Engine* app = new Engine(*this);
+        app->Run();
         delete app;
 	}
 }
@@ -63,13 +63,14 @@ bool Client::connect()
     }
 
 
-    this->InitUser();
+
     std::cout << "Client: " << m_username <<" Connected to server at " << m_serverIp.value().toString() << ":" << m_serverPort << "\n";
     return true;
 }
 
-void Client::InitUser()
+void Client::InitUser(const std::string& username)
 {
+	m_username = username;
 	json send = {
 		   {"action", "InitUser"},
 		   {"data", m_username}
@@ -122,6 +123,7 @@ const std::string& Client::receiveMessagesTCP()
     catch (const std::exception& e) {
         std::cerr << e.what() << "\n";
         if (e.what() == std::string("Client:receiveMessagesTCP::Disconnected from server")) {
+            //this->Disconnect();
         }
     }
 }
@@ -138,6 +140,7 @@ void Client::sendMessageUDP(const std::string& message)
         if (status != sf::Socket::Status::Done) {
             throw std::runtime_error("Client: Failed to send UDP message");
         }
+
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << "\n";
@@ -167,6 +170,7 @@ std::string Client::receiveMessageUDP()
     else if (status == sf::Socket::Status::Disconnected)
     {
         std::cerr << "Client: Disconnected from server (UDP)\n";
+        //this->Disconnect();
         return "";
     }
     else if (status == sf::Socket::Status::Error)
@@ -188,7 +192,7 @@ const std::string& Client::receiveLargeMessages()
         if (status == sf::Socket::Status::Done)
         {
             std::string message(buffer, received);
-            std::cout << "Client:Server: " << message << "\n";
+            //std::cout << "Client:Server: " << message << "\n";
 
 
             return *new std::string(message);
@@ -196,11 +200,13 @@ const std::string& Client::receiveLargeMessages()
         else if (status == sf::Socket::Status::Disconnected)
         {
             throw std::runtime_error("Client:Disconnected from server");
+           // this->Disconnect();
         }
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << "\n";
         if (e.what() == std::string("Client:Disconnected from server")) {
+           // this->Disconnect();
         }
     }
 }
@@ -209,6 +215,7 @@ void Client::Disconnect()
 {
     std::cout << "Client:client disconnecting..." << "\n";
     m_socket.disconnect();
+    exit(0);
 }
 
 json Client::ReciveMapData()
@@ -238,6 +245,7 @@ void Client::InitPlayer(json player_data)
         {"data", player_data}
     };
     this->sendMessageTCP(send.dump());
+    //this->receiveMessagesTCP();
 }
 
 void Client::UpdatePlayer(json player_data)
@@ -263,10 +271,10 @@ json Client::ReceiveAllPlayers()
     // Receive the response from the server
     std::string message = this->receiveMessageUDP();
 	if (message.empty()) {
-		std::cerr << "Client:ReceiveAllPlayers: No Players Found\n";
+		//std::cerr << "Client:ReceiveAllPlayers: No Players Found\n";
 		return json::object();
 	}
-    std::cout << "Client: ReceiveAllPlayers: " << message << "\n";
+    //std::cout << "Client: ReceiveAllPlayers: " << message << "\n";
 
     // Parse and handle the response (optional - you can improve this depending on the server's response)
     try {

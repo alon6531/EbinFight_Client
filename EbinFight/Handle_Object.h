@@ -8,6 +8,7 @@ class Handle_Object
 {
 public:
 	Handle_Object(Client& client);
+	~Handle_Object();
 
 	void AddObject(const std::string& obj_name,const GameObject& obj);
 	void AddPlayer(const std::string& obj_name, const GameObject& obj);

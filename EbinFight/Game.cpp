@@ -15,30 +15,18 @@ void Game::Init()
 	map = new Map(map_data, handleObjects);
 
 	
-	this->InitPlayer();
 	json player_data = p_client.ReceivePlayer();
 
 	std::string player_name = player_data.begin().key();               // "alon"
 	json player_info = player_data[player_name];              // { pos, speed, ... }
 
-	GameObject player = *GameObject::CreateObject(player_info);
+	GameObject player = GameObject::CreateObject(player_info);
 
 
 	handleObjects.AddPlayer(player_name, player);
 }
 
-void Game::InitPlayer()
-{
-	json player_data = {
-		{"texture", "a.png"},
-		{"pos", {600.f, 400.f}},
-		{"scale", {0.3f, 0.3f}},
-		{"origin", "center"},
-		{"HitBoxComponent", {true, {0.f, 0.f}, {0, 0}}},
-		{"MovementComponent", {true, 20}}
-	};
-	p_client.InitPlayer(player_data);
-}
+
 
 
 void Game::Handle_Events(const sf::Event& event, Handle_Controls& m_handle_controls, float dt)

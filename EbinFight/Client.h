@@ -6,7 +6,7 @@
 class Client
 {
 public:
-    Client(const std::string& username);
+    Client();
 	~Client() = default;
 	void Start();
     bool connect();
@@ -15,7 +15,7 @@ public:
 
     const std::string& getUsername() const { return m_username; }
 
-    void InitUser();
+    void InitUser(const std::string& username);
     void InitPlayer(json player_data);
 	void UpdatePlayer(json player_data);
 

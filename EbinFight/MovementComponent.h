@@ -9,6 +9,8 @@ enum MovementDirection
 	Right
 };
 
+#define STACK 1000
+
 class MovementComponent :
     public Component
 {
@@ -19,13 +21,24 @@ public:
 
 	void Render(sf::RenderWindow& window) override;
 
-    void Move(MovementDirection dir);
+	void Move(MovementDirection dir, float dt);
+
+	void StartMoving(MovementDirection dir);
+
+	void StopMoving(MovementDirection dir);
+
     void revertToPreviousPosition();
+
+	const sf::Vector2f& GetNextPosition();
 
 private:
 
 	float m_speed;
     sf::Vector2f m_position;
     sf::Vector2f m_previousPosition;
+	sf::Vector2f m_nextPosition;
+	std::map<MovementDirection, bool> m_moving;
+
+	int m_stackNum;
 };
 

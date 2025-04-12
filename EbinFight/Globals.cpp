@@ -1,5 +1,6 @@
 #include "Globals.h"
 
+sf::Font Global::font = sf::Font("..\\arial.ttf");
 unsigned int Global::win_width = 0;
 unsigned int Global::win_height = 0;
 

@@ -3,7 +3,8 @@
 
 int main()
 {
-    Client client = Client("alon");
+
+    Client client = Client();
     client.Start();
 
     return 0;

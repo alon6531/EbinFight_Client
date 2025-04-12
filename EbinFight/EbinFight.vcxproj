@@ -143,6 +143,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AnimationComponent.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Engine.cpp" />
@@ -151,6 +153,8 @@
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="Handle_Controls.cpp" />
     <ClCompile Include="HitBoxComponent.cpp" />
+    <ClCompile Include="HomePage.cpp" />
+    <ClCompile Include="InputField.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Handle_Object.cpp" />
     <ClCompile Include="Map.cpp" />
@@ -158,6 +162,8 @@
     <ClCompile Include="State.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimationComponent.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Engine.h" />
@@ -167,6 +173,8 @@
     <ClInclude Include="Handle_Controls.h" />
     <ClInclude Include="Handle_Object.h" />
     <ClInclude Include="HitBoxComponent.h" />
+    <ClInclude Include="HomePage.h" />
+    <ClInclude Include="InputField.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="MovementComponent.h" />

@@ -19,6 +19,7 @@ using json = nlohmann::json;
 class Global
 {
 public:
+	static sf::Font font;
 	static unsigned int win_width;
 	static unsigned int win_height;
 };
@@ -27,7 +28,6 @@ std::uint32_t IpToUint32_t(const std::string& ip);
 bool OpenFile(std::vector<std::string>& lines, const std::string& file_name);
 
 struct Package {
-
 	static const std::string& Pack(const std::string& action, const std::string& data);
 	static const std::map<std::string, std::string>& Unpack(const std::string& massage);
 };

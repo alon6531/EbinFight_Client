@@ -16,9 +16,12 @@ public:
     bool IsCollide(const sf::FloatRect& rect);
 
 	sf::RectangleShape& GetHitBox() { return m_hitbox; }
+
+    void UpdateCompData(const sf::Vector2f& offset, const sf::Vector2f& size);
 private:
     sf::RectangleShape m_hitbox;
     sf::Vector2f m_offset;
+    sf::Vector2f m_size;
 };
 
 

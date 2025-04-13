@@ -88,7 +88,7 @@ void Client::sendMessageTCP(const std::string& message)
         {
             throw std::runtime_error("Client:Failed to send message");
         }
-		std::cout << "Client:Sent message: " << message << "\n";
+		//std::cout << "Client:Sent message: " << message << "\n";
 
     }
     catch (const std::exception& e) {
@@ -110,7 +110,7 @@ const std::string& Client::receiveMessagesTCP()
         if (status == sf::Socket::Status::Done)
         {
             std::string message(buffer, received);
-            std::cout << "Client:Server: " << message << "\n";
+            //std::cout << "Client:Server: " << message << "\n";
 
             
             return *new std::string(message);
@@ -134,7 +134,7 @@ void Client::sendMessageUDP(const std::string& message)
         // הפונקציה `send` ב-SFML 3 ל-UDP השתנתה להיות על פי פרמטרים חדשים
     
         unsigned short serverPort = m_serverPort;
-        std::cout << "Sending UDP message to: " << m_serverIp.value().toString() << ":" << m_serverPort << "\n";  // הדפסה לוג
+        //std::cout << "Sending UDP message to: " << m_serverIp.value().toString() << ":" << m_serverPort << "\n";  // הדפסה לוג
         // שלח את ההודעה לשרת ב-UDP
         sf::Socket::Status status = m_udpSocket.send(message.c_str(), message.size(), m_serverIp.value(), serverPort);
         if (status != sf::Socket::Status::Done) {
@@ -159,7 +159,7 @@ std::string Client::receiveMessageUDP()
     if (status == sf::Socket::Status::Done)
     {
         std::string message(buffer, received);
-        std::cout << "Client: Received UDP message from " << sender.value().toString() << ":" << senderPort << " - " << message << "\n";
+        //std::cout << "Client: Received UDP message from " << sender.value().toString() << ":" << senderPort << " - " << message << "\n";
         return message;
     }
     else if (status == sf::Socket::Status::NotReady)
@@ -170,7 +170,7 @@ std::string Client::receiveMessageUDP()
     else if (status == sf::Socket::Status::Disconnected)
     {
         std::cerr << "Client: Disconnected from server (UDP)\n";
-        //this->Disconnect();
+        this->Disconnect();
         return "";
     }
     else if (status == sf::Socket::Status::Error)
@@ -256,6 +256,7 @@ void Client::UpdatePlayer(json player_data)
 		{"data", player_data}
     };
 	this->sendMessageUDP(send.dump());
+    //receiveMessageUDP();
 }
 
 json Client::ReceiveAllPlayers()

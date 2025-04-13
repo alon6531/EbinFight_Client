@@ -8,6 +8,11 @@ Game::Game(Client& client, std::stack<State*>& currentState)
 	this->Init();
 }
 
+Game::~Game()
+{
+	delete map;
+}
+
 
 void Game::Init()
 {
@@ -20,8 +25,15 @@ void Game::Init()
 	std::string player_name = player_data.begin().key();               // "alon"
 	json player_info = player_data[player_name];              // { pos, speed, ... }
 
-	GameObject player = GameObject::CreateObject(player_info);
-
+	GameObject* player =new GameObject(player_info);
+	//player->GetSprite()->setScale(sf::Vector2f(3, 3));
+	//player->GetHitBoxComponent()->UpdateCompData(sf::Vector2f(0, 0), sf::Vector2f(16 * 3, 32 * 3));
+	/*player->AddAnimationComponent(200);
+	player->GetAnimationComponent()->AddFrame(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(16, 32)));
+	player->GetAnimationComponent()->AddFrame(sf::IntRect(sf::Vector2i(16, 0), sf::Vector2i(16, 32)));
+	player->GetAnimationComponent()->AddFrame(sf::IntRect(sf::Vector2i(32, 0), sf::Vector2i(16, 32)));
+	player->GetAnimationComponent()->AddFrame(sf::IntRect(sf::Vector2i(48, 0), sf::Vector2i(16, 32)));*/
+	//player->GetAnimationComponent()->AddFrame(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(32, 32)));
 
 	handleObjects.AddPlayer(player_name, player);
 }

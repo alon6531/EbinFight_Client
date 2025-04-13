@@ -4,12 +4,13 @@
 #include "HitBoxComponent.h"
 #include "MovementComponent.h"
 #include "AnimationComponent.h"
+#include <chrono>
 
 class GameObject
 {
 public:
 	GameObject(const std::string& texture_filePath, const sf::Vector2f& pos, const sf::Vector2f& scale);
-	GameObject(const sf::Sprite& sprite);
+	GameObject(const json& object_data);
 	~GameObject();
 	virtual void Update(float dt);
 
@@ -18,7 +19,7 @@ public:
 
 	void AddHitBoxComponent(const sf::Vector2f& offset, const sf::Vector2f& size);
 	void AddMovementComponent(float speed);
-	void AddAnimationComponent(float frameTime = 0.1f);
+	void AddAnimationComponent();
 
 	
 
@@ -31,7 +32,6 @@ public:
 
 	sf::Sprite* GetSprite() { return p_sprite; }
 
-	static GameObject CreateObject(json object_data);
 	void UpdateObjectData(json object_data);
 
 private:
@@ -40,7 +40,7 @@ private:
 
 protected:
 	sf::Sprite* p_sprite;
-	MovementComponent* m_movementComponent;
+	MovementComponent* p_movementComponent;
 	HitBoxComponent* p_hitBoxComponent;
 	AnimationComponent* p_animationComponent;
 

@@ -126,3 +126,8 @@ const sf::Vector2f& MovementComponent::GetNextPosition()
 {
     return m_nextPosition;
 }
+
+void MovementComponent::UpdateCompData(float speed)
+{
+    m_speed = speed;
+}

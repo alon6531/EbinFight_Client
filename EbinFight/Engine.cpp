@@ -8,6 +8,12 @@ Engine::Engine(Client& client) : m_client(client)
 Engine::~Engine()
 {
     delete m_window;
+    while(!m_state.empty())
+    { 
+        delete m_state.top();
+        m_state.pop();
+    }
+  
 }
 
 void Engine::Run()

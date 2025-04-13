@@ -62,6 +62,7 @@ void HomePage::Handle_Events(const sf::Event& event, Handle_Controls& m_handle_c
 		{
             SavePlayer();
 			OnExitState();
+			return;
 		}
 		for (int i = 0; i < inputFields.size(); i++)
 		{
@@ -119,11 +120,19 @@ void HomePage::SavePlayer()
 		json playerData1 = {
 		{"texture", "a.png"},
  		{"pos", {600.f, 400.f}},
- 		{"scale", {0.3f, 0.3f}},
+ 		{"scale", {3, 3}},
  		{"origin", "center"},
  		{"HitBoxComponent", {true, {0.f, 0.f}, {0, 0}}},
- 		{"MovementComponent", {true, 20}}
-		
+ 		{"MovementComponent", {true, 20}},
+		{"AnimationComponent",
+			{
+			true, 200, "idle", {
+					{{0,0},{16,32}},
+					{{16,0},{16,32}},
+					{{32,0},{16,32}},
+					{{48,0},{16,32}},
+					}
+			}},
 		};
 
 		p_client.InitPlayer(playerData1);
@@ -156,6 +165,7 @@ void HomePage::Render(sf::RenderWindow& window)
 
 	if (saveButton)
 	    saveButton->Render(window);
+
 
 
 }

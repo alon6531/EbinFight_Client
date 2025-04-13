@@ -31,6 +31,8 @@ public:
 
 	const sf::Vector2f& GetNextPosition();
 
+	void UpdateCompData(float speed);
+
 private:
 
 	float m_speed;

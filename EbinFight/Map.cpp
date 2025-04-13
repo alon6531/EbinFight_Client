@@ -101,9 +101,10 @@ void Map::LoadObjects(const json& map_data)
 		std::string objectName = object["name"].get<std::string>();
 		
 		
-		GameObject gameObject = GameObject::CreateObject(object);
+		GameObject* gameObject = new GameObject(object);
 	
 		m_handle_objects.AddObject(objectName, gameObject);
+
 	}
 }
 

@@ -5,6 +5,7 @@ HitBoxComponent::HitBoxComponent(sf::Sprite& sprite, const sf::Vector2f& offset,
 {
  
     m_hitbox.setPosition(sprite.getPosition() + m_offset);
+    m_size = size;
     m_hitbox.setSize(size == sf::Vector2f(0.f, 0.f) ? sprite.getGlobalBounds().size : size);
     m_hitbox.setOrigin(m_hitbox.getLocalBounds().getCenter());
     m_hitbox.setFillColor(sf::Color(0, 0, 0, 0));  // Transparent fill
@@ -14,7 +15,9 @@ HitBoxComponent::HitBoxComponent(sf::Sprite& sprite, const sf::Vector2f& offset,
 
 void HitBoxComponent::Update(float dt)
 {
+    m_hitbox.setSize(m_size == sf::Vector2f(0.f, 0.f) ? p_sprite.getGlobalBounds().size : m_size);
     m_hitbox.setPosition(p_sprite.getPosition() + m_offset);
+    m_hitbox.setOrigin(m_hitbox.getLocalBounds().getCenter());
 }
 
 void HitBoxComponent::Render(sf::RenderWindow& window)
@@ -43,4 +46,10 @@ bool HitBoxComponent::IsCollide(const sf::FloatRect& rect)
 
     // If the intersection has a non-zero width and height, there is a collision
     return intersection.has_value();
+}
+
+void HitBoxComponent::UpdateCompData(const sf::Vector2f& offset, const sf::Vector2f& size)
+{
+    m_offset = offset;
+    m_size = size;
 }

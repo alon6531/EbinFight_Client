@@ -17,17 +17,17 @@ InputField::InputField(const sf::Vector2f& position, const sf::Vector2f& size)
 void InputField::handleEvent(const sf::Event& event)
 {
     if (!m_isFocused) return;
-	auto textEntered = event.getIf<sf::Event::TextEntered>();
-    if (textEntered) {
-        char entered = static_cast<char>(textEntered->unicode);
-        if (std::isprint(entered)) {
-            m_content += entered;
-        }
-        else if (textEntered->unicode == 8 && !m_content.empty()) {
-            m_content.pop_back();
-        }
-        m_text.setString(m_content);
+   auto textEntered = event.getIf<sf::Event::TextEntered>();
+if (textEntered) {
+    uint32_t unicode = textEntered->unicode;
+    if (unicode < 128 && std::isprint(static_cast<unsigned char>(unicode))) {
+        m_content += static_cast<char>(unicode);
     }
+    else if (unicode == 8 && !m_content.empty()) { // Backspace
+        m_content.pop_back();
+    }
+    m_text.setString(m_content);
+}
 }
 
 bool InputField::IsPressed(const sf::Vector2i& mousePosition) {

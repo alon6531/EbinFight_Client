@@ -9,7 +9,7 @@ class Game :
 {
 public:
 	Game(Client& client, std::stack<State*>& currentState);
-
+	~Game();
 
 	void Handle_Events(const sf::Event& event, Handle_Controls& m_handle_controls, float dt) override;
 	void Update(float dt) override;

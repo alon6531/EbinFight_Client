@@ -10,8 +10,9 @@ public:
 	Handle_Object(Client& client);
 	~Handle_Object();
 
-	void AddObject(const std::string& obj_name,const GameObject& obj);
-	void AddPlayer(const std::string& obj_name, const GameObject& obj);
+	void AddObject(const std::string& obj_name,GameObject* obj);
+	void AddPlayers(const std::string& obj_name, GameObject* obj);
+	void AddPlayer(const std::string& obj_name, GameObject* obj);
 	void Handle_Events(const sf::Event& event, Handle_Controls& m_handle_controls, float dt); 
 	void Update(float dt);
 	void Render(sf::RenderWindow& window);
@@ -25,6 +26,7 @@ private:
 	Client& m_client;
 	GameObject* m_player;
 	std::map<std::string, GameObject*> m_objects;
+	std::map<std::string, GameObject*> m_players;
 	sf::Vector2f m_camera;
 	float keyDelay = 10;
 };
